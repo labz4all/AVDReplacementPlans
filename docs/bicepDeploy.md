@@ -2,28 +2,28 @@
 ## AVD Replacement plan with basic options
 ### PowerShell
 ```PowerShell
-$ResourceGroupName = 'rg-avd-weu-avd1-service-objects'
+$ResourceGroupName = 'L4A-AVD-WU1-ReplacementPlan-HP1'
 $bicepParams = @{
 
     #FunctionApp
-    FunctionAppName           = 'func-avdreplacementplan-weu-230131' # Name must be globally unique
-    HostPoolName              = 'vdpool-weu-avd1-001'
-    TargetSessionHostCount    = 2 # Replace this with your target number of session hosts in the pool
-    SessionHostNamePrefix     = "AVD-WE-D01"
+    FunctionAppName           = 'func-avdreplacementplan-wu1-labz4all' # Name must be globally unique
+    HostPoolName              = 'L4A-WU1-MS-HP1'
+    TargetSessionHostCount    = 1 # Replace this with your target number of session hosts in the pool
+    SessionHostNamePrefix     = "WU1ADMSHP1"
     SessionHostTemplateUri    = "https://raw.githubusercontent.com/WillyMoselhy/AVDReplacementPlans/main/SampleSessionHostTemplate/sessionhost.json"
-    ADOrganizationalUnitPath  = "OU=AVD,DC=contoso,DC=local"
-    SubnetId                  = "/subscriptions/2cc55a8e-7e60-4bba-b1e1-2241e5249d46/resourceGroups/rg-ActiveDirectory-01/providers/Microsoft.Network/virtualNetworks/rg-ActiveDirectory-01-vnet/subnets/default"
+    ADOrganizationalUnitPath  = "OU=HP1,OU=Multi-Session Desktop Hostpools,OU=AVD,OU=WU1,OU=AZ,OU=Infrastructure,OU=L4A,DC=labz4all,DC=com"
+    SubnetId                  = "/subscriptions/e3d9fc92-f025-4462-8ef2-7fb34231418f/resourceGroups/L4A-WU1-AVD-VNET/providers/Microsoft.Network/virtualNetworks/L4A-WU1-AVD-VNET/subnets/L4A-WU1-AVD-VNET-ADDS-SH-SNET"
 
     # Supporting Resources
-    StorageAccountName        = 'stavdreplacehost230131' # Make sure this is a unique name
+    StorageAccountName        = 'stavdreplacehost23l4a' # Make sure this is a unique name
     LogAnalyticsWorkspaceName = 'law-avdreplacementplan'
     # Session Host Parameters
     SessionHostParameters     = @{
-        VMSize                = 'Standard_B2ms'
+        VMSize                = 'Standard_D4as_v5'
         TimeZone              = 'GMT Standard Time'
-        AdminUsername         = 'AVDAdmin'
+        AdminUsername         = 'labzadmin'
 
-        AcceleratedNetworking = $false
+        AcceleratedNetworking = $true
 
         ImageReference        = @{
             publisher = 'MicrosoftWindowsDesktop'
@@ -35,15 +35,15 @@ $bicepParams = @{
         #Domain Join
         DomainJoinObject      = @{
             DomainType  ='ActiveDirectory'
-            DomainName = 'contoso.local'
-            UserName   = 'AzureAdmin'
+            DomainName = 'labz4all.com'
+            UserName   = 'jesse'
         }
         DomainJoinPassword    = @{
             reference = @{
                 keyVault = @{ # Update this with the id of your key vault and secret name.
-                    id         = '/subscriptions/2cc55a8e-7e60-4bba-b1e1-2241e5249d46/resourceGroups/rg-ActiveDirectory-01/providers/Microsoft.KeyVault/vaults/kv-contoso-we-01'
+                    id         = '/subscriptions/1bba5916-d3ff-403e-9007-58759a426278/resourceGroups/L4A-WU2-PLATFORMS/providers/Microsoft.KeyVault/vaults/L4A-AKV-WU2-TAGS'
                 }
-                secretName = 'AVDDomainJoin'
+                secretName = 'domainjoin'
             }
         }
 
